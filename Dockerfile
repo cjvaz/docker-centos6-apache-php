@@ -23,8 +23,6 @@ RUN yum install -y \
     php-mysql \
     php-pdo \
     php-pear  \
-    php-pecl-memcache \
-    php-pecl-xdebug \
     php-pgsql \
     php-process \
     php-recode \
@@ -36,15 +34,21 @@ RUN yum install -y \
     php-xml \
     php-xmlrpc
 
+# Install xdebug
+RUN yum -y install gcc
+RUN pecl channel-update pecl.php.net
+RUN pecl install xdebug-2.2.7
+
 RUN sed -i 's/;date.timezone =.*/date.timezone = "America\/Sao_Paulo"/' /etc/php.ini &&\    
     sed -i 's/post_max_size = 8M/post_max_size = 64M/g' /etc/php.ini &&\
     sed -i 's/memory_limit = 128M/memory_limit = 256M/g' /etc/php.ini &&\
     sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php.ini &&\
     sed -i 's/short_open_tag = Off/short_opeRUN a2enmod rewriten_tag = On/' /etc/php.ini &&\
+    echo "zend_extension=/usr/lib64/php/modules/xdebug.so" >> /etc/php.d/xdebug.ini &&\
     echo "xdebug.remote_port=9000" >> /etc/php.d/xdebug.ini &&\
-    echo "xdebug.remote_enable=on" >> /etc/php.d/xdebug.ini &&\
-    echo "xdebug.remote_autostart=off" >> /etc/php.d/xdebug.ini &&\
-    echo "xdebug.remote_connect_back = 1" >> /etc/php.d/xdebug.ini &&\
+    echo "xdebug.remote_enable=1" >> /etc/php.d/xdebug.ini &&\
+    echo "xdebug.remote_autostart=on" >> /etc/php.d/xdebug.ini &&\
+    echo "xdebug.remote_connect_back=1" >> /etc/php.d/xdebug.ini &&\
     echo "xdebug.remote_log=/var/log/xdebug.log" >> /etc/php.d/xdebug.ini
 
 
